@@ -1,0 +1,15 @@
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\Petroom_Application.csproj.AssemblyReference.cache
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\Petroom_Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\Petroom_Application.AssemblyInfoInputs.cache
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\Petroom_Application.AssemblyInfo.cs
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\Petroom_Application.csproj.CoreCompileInputs.cache
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\bin\Debug\net6.0\Petroom_Application.exe
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\bin\Debug\net6.0\Petroom_Application.deps.json
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\bin\Debug\net6.0\Petroom_Application.runtimeconfig.json
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\bin\Debug\net6.0\Petroom_Application.dll
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\bin\Debug\net6.0\Petroom_Application.pdb
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\Petroom_Application.dll
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\refint\Petroom_Application.dll
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\Petroom_Application.pdb
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\Petroom_Application.genruntimeconfig.cache
+C:\boss\kmutt\Y2\MDT211\Petroom_Application\obj\Debug\net6.0\ref\Petroom_Application.dll
