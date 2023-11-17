@@ -1,68 +1,8 @@
 public class User
 {
-    /* private int idUser;
-    private string name;
-    private int age;
-    private string number;
-    private string imageUser;
-    private string email;
-    private List<Pet> idPets;
-
-    public User(
-        int idUser,
-        string name,
-        int age,
-        string number,
-        string imageUser,
-        string email,
-        List<Pet> idPets
-        )
-    {
-        this.idUser = idUser;
-        this.name = name;
-        this.age = age;
-        this.number = number;
-        this.imageUser = imageUser;
-        this.email = email;
-        this.idPets = idPets;
-    }
-
-    public int GetIdUser()
-    {
-        return idUser;
-    }
-    public string GetName()
-    {
-        return name;
-    }
-    public int GetAge()
-    {
-        return age;
-    }
-    public string GetNumber()
-    {
-        return number;
-    }
-    public string GetImageUser()
-    {
-        return imageUser;
-    }
-    public string GetEmail()
-    {
-        return email;
-    }
-    public List<Pet> GetIdPet()
-    {
-        return idPets;
-    }
-
-    public void AddPetInUser(List<int> idPets)
-    {
-        this.idPets = idPets;
-    } */
-
     public int UserId { get; set; }
     public string Username { get; set; }
+    public string Password { get; set; }
     public int Age { get; set; }
     public string Number { get; set; }
     public string ImageUser { get; set; }
@@ -72,6 +12,7 @@ public class User
     public User(
         int UserId,
         string Username,
+        string Password,
         int Age,
         string Number,
         string ImageUser,
@@ -80,6 +21,7 @@ public class User
     {
         this.UserId = UserId;
         this.Username = Username;
+        this.Password = Password;
         this.Age = Age;
         this.Number = Number;
         this.ImageUser = ImageUser;

@@ -17,10 +17,10 @@ class Program
     public static List<User> AddUser()
     {
         List<User> users = new List<User>();
-        users.Add(new User(1, "Jiramet", 19, "0610614617", "Image", "jib8147@gmail.com"));
-        users.Add(new User(2, "Yomu", 19, "0610614617", "Image", "jib8147@gmail.com"));
-        users.Add(new User(3, "Akira", 19, "0610614617", "Image", "jib8147@gmail.com"));
-        users.Add(new User(3, "jiramet", 18, "0610614617", "Image", "jib8147@gmail.com"));
+        users.Add(new User(1, "Jiramet", "asdfghjkl", 19, "0610614617", "Image", "jib8147@gmail.com"));
+        users.Add(new User(2, "Yomu", "qwerty", 19, "0610614617", "Image", "jib8147@gmail.com"));
+        users.Add(new User(3, "Akira", "zxcvbnm", 19, "0610614617", "Image", "jib8147@gmail.com"));
+        users.Add(new User(3, "jiramet", "qazwsx", 18, "0610614617", "Image", "jib8147@gmail.com"));
         return users;
     }
 
@@ -63,6 +63,56 @@ class Program
             Console.WriteLine("||---------------None!!-------------------||");
         }
         Console.WriteLine("||========================================||");
+    }
+
+    public static User SignIn(int idUser)
+    {
+        Console.WriteLine("||================Sign In=================||");
+        Console.Write("||Username : ");
+        string usernameSignIn = Console.ReadLine();
+        Console.Write("||Password : ");
+        string passwordSignIn = Console.ReadLine();
+        Console.Write("||Age : ");
+        int ageSignIn = int.Parse(Console.ReadLine());
+        Console.Write("||Number : ");
+        string numberSignIn = Console.ReadLine();
+        Console.Write("||Image : ");
+        string imageUserSignIn = Console.ReadLine();
+        Console.Write("||Email : ");
+        string emailSignIn = Console.ReadLine();
+        Console.WriteLine("||=============Sign In Complete===========||");
+        return new User(idUser, usernameSignIn, passwordSignIn, ageSignIn, numberSignIn, imageUserSignIn, emailSignIn);
+    }
+
+    public static void LogIn(List<User> users)
+    {
+        Console.WriteLine("||=================Log In=================||");
+        Console.Write("||Username : ");
+        string usernameLogIn = Console.ReadLine();
+        Console.Write("||Password : ");
+        string passwordLogIn = Console.ReadLine();
+        Console.WriteLine("||========================================||");
+        User userLoginComplete = CheckLogIn(usernameLogIn, passwordLogIn, users);
+        if (userLoginComplete != null)
+        {
+            Console.WriteLine("||=============Log In Complete============||");
+        }
+        else
+        {
+            Console.WriteLine("||=============Worng Password=============||");
+        }
+    }
+
+    public static User CheckLogIn(string username, string password, List<User> users)
+    {
+        foreach (User user in users)
+        {
+            if ((user.Username == username || user.Email == username) && user.Password == password)
+            {
+                return user;
+            }
+        }
+        return null;
     }
 
     public static void SearchUI(List<User> users, List<Pet> pets)
@@ -112,9 +162,6 @@ class Program
         {
             Console.WriteLine("||Not Found!!");
         }
-        /* else if (Search(keyword, pets[pets.Count - 1]) < 0 && check) {
-            Console.WriteLine("||Not Found!!");
-        } */
         Console.WriteLine("||===============End of Search============||");
     }
     public static User Search(string keyword, User user)
@@ -147,11 +194,88 @@ class Program
         return -1;
     }
 
+    /* public static List<Post> InputPost(string Topic, string Content, Feed feed)
+    {
+        List<Post> posts = new List<Post>();
+        feed.AddPost(posts);
+        posts.Add(new Post(Topic, Content, 0));
+        return posts;
+    } */
+
+    /* public static void Feed()
+    {
+        Console.WriteLine("||==================Post==================||");
+        Console.WriteLine("||----Post Something----------------------||");
+        Console.Write("||Topic : ");
+        string Topic = Console.ReadLine();
+        Console.Write("||Content : ");
+        string Content = Console.ReadLine();
+        Console.WriteLine("||----------------------------------------||");
+        List<Post> posts = InputPost(Topic, Content, feeds);
+        Console.WriteLine("||==================Feed==================||");
+        foreach (Post post in posts)
+        {
+            Console.WriteLine("||----Post {0}------------------------------||", post.Post);
+        }
+    } */
+
+    public static bool LogInOrSignIn()
+    {
+        string[] option = { "||Log In", "||Sign In" };
+        int selectedIndex = 0;
+        ConsoleKeyInfo key;
+
+        do
+        {
+            Console.Clear();
+            OpenApp();
+            for (int i = 0; i < option.Length; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+
+                Console.WriteLine(option[i]);
+
+                Console.ResetColor();
+
+            }
+
+            key = Console.ReadKey();
+
+            switch (key.Key)
+            {
+                case ConsoleKey.LeftArrow:
+                    selectedIndex = (selectedIndex - 1 + option.Length) % option.Length;
+                    break;
+                case ConsoleKey.A:
+                    selectedIndex = (selectedIndex - 1 + option.Length) % option.Length;
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    selectedIndex = (selectedIndex + 1) % option.Length;
+                    break;
+                case ConsoleKey.D:
+                    selectedIndex = (selectedIndex + 1) % option.Length;
+                    break;
+            }
+
+        } while (key.Key != ConsoleKey.Enter);
+
+        Console.Clear();
+        if (option[selectedIndex].Contains("Sign In"))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public static void Main(string[] args)
     {
         List<User> users = AddUser();
         List<Pet> pets = AddPet();
-        OpenApp();
 
         foreach (User user in users)
         {
@@ -164,12 +288,22 @@ class Program
             };
         }
 
-
-        /* foreach (User user in users)
+        bool logInOrSignIn = LogInOrSignIn();
+        if (logInOrSignIn)
         {
+            User userNewSignIn = SignIn(users.Count);
+            users.Add(userNewSignIn);
+            Console.Clear();
+            Profile(userNewSignIn);
+        }
+        else
+        {
+            LogIn(users);
+        }
+        /* foreach (User user in users) {
             Profile(user);
         } */
-
-        SearchUI(users, pets);
+        //SearchUI(users, pets);
+        /* Feed(); */
     }
 }
