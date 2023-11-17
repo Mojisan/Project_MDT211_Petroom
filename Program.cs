@@ -14,13 +14,13 @@ class Program
         Console.WriteLine("||========================================||");
 
     }
-    public static User[] AddUser()
+    public static List<User> AddUser()
     {
-        User[] users = {
-            new User(1, "Jiramet", 19, "0610614617", "Image", "jib8147@gmail.com"),
-            new User(2, "Yomu", 19, "0610614617", "Image", "jib8147@gmail.com"),
-            new User(3, "Akira", 19, "0610614617", "Image", "jib8147@gmail.com"),
-        };
+        List<User> users = new List<User>();
+        users.Add(new User(1, "Jiramet", 19, "0610614617", "Image", "jib8147@gmail.com"));
+        users.Add(new User(2, "Yomu", 19, "0610614617", "Image", "jib8147@gmail.com"));
+        users.Add(new User(3, "Akira", 19, "0610614617", "Image", "jib8147@gmail.com"));
+        users.Add(new User(3, "jiramet", 18, "0610614617", "Image", "jib8147@gmail.com"));
         return users;
     }
 
@@ -65,52 +65,91 @@ class Program
         Console.WriteLine("||========================================||");
     }
 
-    public static void SearchUI(User[] users, List<Pet> pets)
+    public static void SearchUI(List<User> users, List<Pet> pets)
     {
         Console.WriteLine("||=================Search=================||");
         Console.Write("||Keyword : ");
         string keyword = Console.ReadLine();
         Console.WriteLine("||----------------------------------------||");
-        User Find = Search(keyword, users, pets);
-        if (Find != null)
+        bool check = true;
+        while (check)
         {
-            Profile(Find);
+            foreach (User user in users)
+            {
+                User Find = Search(keyword, user);
+                if (Find != null)
+                {
+                    while (true)
+                    {
+                        Profile(Find);
+                        check = false;
+                        break;
+                    }
+                }
+            }
+
+            foreach (Pet pet in pets)
+            {
+                int idUser = Search(keyword, pet);
+                if (idUser >= 0)
+                {
+                    while (true)
+                    {
+                        Profile(users[idUser - 1]);
+                        check = false;
+                        break;
+                    }
+                }
+            }
+            if (Search(keyword, users[users.Count - 1]) == null && check)
+            {
+                Console.WriteLine("||Not Found!!");
+                check = false;
+            }
+
         }
-        else
+        if (Search(keyword, users[users.Count - 1]) == null && check)
         {
             Console.WriteLine("||Not Found!!");
         }
+        /* else if (Search(keyword, pets[pets.Count - 1]) < 0 && check) {
+            Console.WriteLine("||Not Found!!");
+        } */
+        Console.WriteLine("||===============End of Search============||");
     }
-
-    public static User Search(string keyword, User[] users, List<Pet> pets)
+    public static User Search(string keyword, User user)
     {
-        foreach (User user in users)
+        if (user.Username.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
         {
-            if (user.Username.Contains(keyword))
+            return user;
+        }
+        /* foreach (Pet pet in pets)
+        {
+            if (pet.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 || pet.Specie.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 || pet.Breed.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 && user.Username.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 )
             {
                 return user;
             }
             else
             {
-                foreach (Pet pet in pets)
-                {
-                    if (pet.Name.Contains(keyword) || pet.Specie.Contains(keyword) || pet.Breed.Contains(keyword))
-                    {
-                        return user;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
+                return null;
             }
-        }
+        } */
+
         return null;
+    }
+
+    public static int Search(string keyword, Pet pet)
+    {
+        if (pet.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 || pet.Specie.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 || pet.Breed.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return pet.UserId;
+        }
+        return -1;
     }
 
     public static void Main(string[] args)
     {
-        User[] users = AddUser();
+        List<User> users = AddUser();
         List<Pet> pets = AddPet();
         OpenApp();
 
