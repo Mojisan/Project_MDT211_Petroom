@@ -33,9 +33,11 @@ class Program
         return pets;
     }
 
-    public static void Profile(User user)
+    public static void Profile(List<User> users, List<Pet> pets, User user)
     {
+        ConsoleKeyInfo key;
         Console.WriteLine("||==============Profile User==============||");
+        Console.WriteLine("||-[Esc to Exit]--------------------------||");
         Console.WriteLine("||Username : {0}", user.Username);
         Console.WriteLine("||Age : {0}", user.Age);
         Console.WriteLine("||Number : {0}", user.Number);
@@ -63,6 +65,11 @@ class Program
             Console.WriteLine("||---------------None!!-------------------||");
         }
         Console.WriteLine("||========================================||");
+        do
+        {
+            key = Console.ReadKey();
+            Home(users, pets, user);
+        } while (key.Key != ConsoleKey.Escape);
     }
 
     public static User SignIn(int idUser)
@@ -84,7 +91,7 @@ class Program
         return new User(idUser, usernameSignIn, passwordSignIn, ageSignIn, numberSignIn, imageUserSignIn, emailSignIn);
     }
 
-    public static void LogIn(List<User> users)
+    public static User LogIn(List<User> users)
     {
         Console.WriteLine("||=================Log In=================||");
         Console.Write("||Username : ");
@@ -96,10 +103,12 @@ class Program
         if (userLoginComplete != null)
         {
             Console.WriteLine("||=============Log In Complete============||");
+            return userLoginComplete;
         }
         else
         {
             Console.WriteLine("||=============Worng Password=============||");
+            return null;
         }
     }
 
@@ -115,9 +124,11 @@ class Program
         return null;
     }
 
-    public static void SearchUI(List<User> users, List<Pet> pets)
+    public static void SearchUI(List<User> users, List<Pet> pets, User currentUser)
     {
+        ConsoleKeyInfo key;
         Console.WriteLine("||=================Search=================||");
+        Console.WriteLine("||-[Esc to Exit]--------------------------||");
         Console.Write("||Keyword : ");
         string keyword = Console.ReadLine();
         Console.WriteLine("||----------------------------------------||");
@@ -131,7 +142,7 @@ class Program
                 {
                     while (true)
                     {
-                        Profile(Find);
+                        Profile(users, pets, Find);
                         check = false;
                         break;
                     }
@@ -145,7 +156,7 @@ class Program
                 {
                     while (true)
                     {
-                        Profile(users[idUser - 1]);
+                        Profile(users, pets, users[idUser - 1]);
                         check = false;
                         break;
                     }
@@ -163,6 +174,11 @@ class Program
             Console.WriteLine("||Not Found!!");
         }
         Console.WriteLine("||===============End of Search============||");
+        do
+        {
+            key = Console.ReadKey();
+            Home(users, pets, currentUser);
+        } while (key.Key != ConsoleKey.Escape);
     }
     public static User Search(string keyword, User user)
     {
@@ -221,7 +237,7 @@ class Program
 
     public static bool LogInOrSignIn()
     {
-        string[] option = { "||Log In", "||Sign In" };
+        string[] options = { "Log In", "Sign In" };
         int selectedIndex = 0;
         ConsoleKeyInfo key;
 
@@ -229,7 +245,7 @@ class Program
         {
             Console.Clear();
             OpenApp();
-            for (int i = 0; i < option.Length; i++)
+            for (int i = 0; i < options.Length; i++)
             {
                 if (i == selectedIndex)
                 {
@@ -237,7 +253,8 @@ class Program
                     Console.ForegroundColor = ConsoleColor.Black;
                 }
 
-                Console.WriteLine(option[i]);
+                Console.Write("||");
+                Console.WriteLine(options[i]);
 
                 Console.ResetColor();
 
@@ -248,28 +265,89 @@ class Program
             switch (key.Key)
             {
                 case ConsoleKey.LeftArrow:
-                    selectedIndex = (selectedIndex - 1 + option.Length) % option.Length;
+                    selectedIndex = (selectedIndex - 1 + options.Length) % options.Length;
                     break;
                 case ConsoleKey.A:
-                    selectedIndex = (selectedIndex - 1 + option.Length) % option.Length;
+                    selectedIndex = (selectedIndex - 1 + options.Length) % options.Length;
                     break;
 
                 case ConsoleKey.RightArrow:
-                    selectedIndex = (selectedIndex + 1) % option.Length;
+                    selectedIndex = (selectedIndex + 1) % options.Length;
                     break;
                 case ConsoleKey.D:
-                    selectedIndex = (selectedIndex + 1) % option.Length;
+                    selectedIndex = (selectedIndex + 1) % options.Length;
                     break;
             }
 
         } while (key.Key != ConsoleKey.Enter);
 
         Console.Clear();
-        if (option[selectedIndex].Contains("Sign In"))
+        if (options[selectedIndex].Contains("Sign In"))
         {
             return true;
         }
         return false;
+    }
+
+    public static void Home(List<User> users, List<Pet> pets, User user)
+    {
+        string[] options = { "Search", "Feed", "Profile", "Match" };
+        int selectedIndex = 0;
+        ConsoleKeyInfo key;
+
+        do
+        {
+            Console.Clear();
+            for (int i = 0; i < options.Length; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+
+                Console.Write("||");
+                Console.WriteLine(options[i]);
+
+                Console.ResetColor();
+            }
+
+            key = Console.ReadKey();
+
+            switch (key.Key)
+            {
+                case ConsoleKey.LeftArrow:
+                    selectedIndex = (selectedIndex - 1 + options.Length) % options.Length;
+                    break;
+                case ConsoleKey.A:
+                    selectedIndex = (selectedIndex - 1 + options.Length) % options.Length;
+                    break;
+                case ConsoleKey.RightArrow:
+                    selectedIndex = (selectedIndex + 1) % options.Length;
+                    break;
+                case ConsoleKey.D:
+                    selectedIndex = (selectedIndex + 1) % options.Length;
+                    break;
+            }
+        } while (key.Key != ConsoleKey.Enter);
+
+        Console.Clear();
+        if (options[selectedIndex].Contains("Search"))
+        {
+            SearchUI(users, pets, user);
+        }
+        else if (options[selectedIndex].Contains("Feed"))
+        {
+
+        }
+        else if (options[selectedIndex].Contains("Profile"))
+        {
+            Profile(users, pets, user);
+        }
+        else
+        {
+
+        }
     }
 
     public static void Main(string[] args)
@@ -292,14 +370,24 @@ class Program
         if (logInOrSignIn)
         {
             User userNewSignIn = SignIn(users.Count);
-            users.Add(userNewSignIn);
-            Console.Clear();
-            Profile(userNewSignIn);
+            if (userNewSignIn != null)
+            {
+                users.Add(userNewSignIn);
+                Console.Clear();
+                Home(users, pets, userNewSignIn);
+            }
         }
         else
         {
-            LogIn(users);
+            User userLogIn = LogIn(users);
+            if (userLogIn != null)
+            {
+                Console.Clear();
+                Home(users, pets, userLogIn);
+            }
         }
+
+        /* SearchUI(users,pets); */
         /* foreach (User user in users) {
             Profile(user);
         } */
