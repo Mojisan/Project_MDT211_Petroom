@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\boss\\kmutt\\Y2\\MDT211\\Petroom_Application\\Petroom_Application.csproj",
+      "projectUniqueName": "C:\\boss\\kmutt\\Y2\\MDT211\\Git_Project\\Project_MDT211_Petroom\\Petroom_Application.csproj",
       "projectName": "Petroom_Application",
-      "projectPath": "C:\\boss\\kmutt\\Y2\\MDT211\\Petroom_Application\\Petroom_Application.csproj",
+      "projectPath": "C:\\boss\\kmutt\\Y2\\MDT211\\Git_Project\\Project_MDT211_Petroom\\Petroom_Application.csproj",
       "packagesPath": "C:\\Users\\bossj\\.nuget\\packages\\",
-      "outputPath": "C:\\boss\\kmutt\\Y2\\MDT211\\Petroom_Application\\obj\\",
+      "outputPath": "C:\\boss\\kmutt\\Y2\\MDT211\\Git_Project\\Project_MDT211_Petroom\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

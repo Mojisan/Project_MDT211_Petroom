@@ -355,6 +355,8 @@ class Program
         List<User> users = AddUser();
         List<Pet> pets = AddPet();
 
+        Console.WriteLine("Hello World");
+
         foreach (User user in users)
         {
             foreach (Pet pet in pets)
