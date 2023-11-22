@@ -8,6 +8,7 @@ public class User
     public string ImageUser { get; set; }
     public string Email { get; set; }
     public List<Pet> Pets;
+    public List<Post> Posts;
 
     public User(
         int UserId,
@@ -27,11 +28,16 @@ public class User
         this.ImageUser = ImageUser;
         this.Email = Email;
         this.Pets = new List<Pet>();
+        this.Posts = new List<Post>();
     }
 
     public void AddPets(Pet pet)
     {
         Pets.Add(pet);
+    }
+    public void AddPosts(Post post)
+    {
+        Posts.Add(post);
     }
 }
 

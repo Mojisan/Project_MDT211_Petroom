@@ -15,7 +15,7 @@ class Program
         Console.WriteLine("||========================================||");
 
     }
-    public static List<User> AddUser()
+    public static List<User> DefaultUser()
     {
         List<User> users = new List<User>();
         users.Add(new User(1, "Jiramet", "asdfghjkl", 19, "0610614617", "Image", "jib8147@gmail.com"));
@@ -25,7 +25,7 @@ class Program
         return users;
     }
 
-    public static List<Pet> AddPet()
+    public static List<Pet> DefaultPet()
     {
         List<Pet> pets = new List<Pet>();
         pets.Add(new Pet(1, 1, "Bobby", "12Y", "Dog", "Mix", "Image", "Male", "-", "None", "Kind", "-"));
@@ -94,29 +94,30 @@ class Program
         Console.Write("||Password : ");
         string passwordLogIn = Console.ReadLine();
         Console.WriteLine("||========================================||");
-        User userLoginComplete = CheckLogIn(usernameLogIn, passwordLogIn, users);
+        User userLoginComplete = null;
+        foreach (User user in users)
+        {
+            if ((user.Username == usernameLogIn || user.Email == usernameLogIn) && user.Password == passwordLogIn)
+            {
+                userLoginComplete = user;
+                break;
+            }
+            else
+            {
+                userLoginComplete = null;
+            }
+        }
+
         if (userLoginComplete != null)
         {
             Console.WriteLine("||=============Log In Complete============||");
-            return userLoginComplete;
         }
         else
         {
             Console.WriteLine("||=============Worng Password=============||");
-            return null;
         }
-    }
 
-    public static User CheckLogIn(string username, string password, List<User> users)
-    {
-        foreach (User user in users)
-        {
-            if ((user.Username == username || user.Email == username) && user.Password == password)
-            {
-                return user;
-            }
-        }
-        return null;
+        return userLoginComplete;
     }
 
     public static void SearchUI(List<User> users, List<Pet> pets)
@@ -167,6 +168,7 @@ class Program
         }
         Console.WriteLine("||===============End of Search============||");
     }
+
     public static User Search(string keyword, User user)
     {
         if (user.Username.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
@@ -183,6 +185,105 @@ class Program
             return pet.UserId;
         }
         return -1;
+    }
+
+    public static Pet AddPetUI(int idPet, int idUser)
+    {
+        Console.WriteLine("|=================Add Pet================||");
+        Console.Write("||Name : ");
+        string name = Console.ReadLine();
+        Console.Write("||Age : ");
+        string age = Console.ReadLine();
+        Console.Write("||Specie : ");
+        string specie = Console.ReadLine();
+        Console.Write("||Breed : ");
+        string breed = Console.ReadLine();
+        Console.Write("||Image Pet : ");
+        string imagePet = Console.ReadLine();
+        Console.Write("||Sex : ");
+        string sex = Console.ReadLine();
+        Console.Write("||Status : ");
+        string status = Console.ReadLine();
+        Console.Write("||Trait : ");
+        string trait = Console.ReadLine();
+        Console.Write("||Medical History : ");
+        string mHistory = Console.ReadLine();
+        Console.Write("||Description : ");
+        string description = Console.ReadLine();
+        Console.WriteLine("||=============Add Pet Complete===========||");
+        return new Pet(idPet, idUser, name, age, specie, breed, imagePet, sex, status, mHistory, trait, description);
+    }
+
+    public static void FeedHeadlineText()
+    {
+        Console.WriteLine("||==================Feed==================||");
+        Console.WriteLine("||-[Press + to add Post]------------------||");
+        Console.WriteLine("||========================================||");
+    }
+
+    public static void Feed(List<User> users, User currentUser)
+    {
+        FeedHeadlineText();
+        bool checkPost = false;
+        foreach (User user in users)
+        {
+            if (user.Posts.Count != 0)
+            {
+                int idPost = 0;
+                ConsoleKeyInfo key;
+                do
+                {
+                    Console.Clear();
+                    FeedHeadlineText();
+                    PostUI(user.Posts[idPost], user);
+                    key = Console.ReadKey();
+                    if ((key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.D) && idPost < user.Posts.Count - 1)
+                    {
+                        idPost++;
+                    }
+                    else if ((key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.A) && idPost > 0)
+                    {
+                        idPost--;
+                    }
+                    else if (key.Key == ConsoleKey.OemPlus)
+                    {
+                        AddPost(currentUser);
+                        Feed(users, currentUser);
+                    }
+                } while (key.Key != ConsoleKey.Enter);
+            }
+            else
+            {
+                checkPost = true;
+            }
+        }
+        if (checkPost)
+        {
+            Console.WriteLine("||None Post!!");
+        }
+    }
+
+    public static void PostUI(Post post, User user)
+    {
+        Console.WriteLine($"||Topic : {post.Topic}");
+        Console.WriteLine($"||Content : {post.Content}");
+        Console.WriteLine($"||Post by {user.Username}");
+        Console.WriteLine($"||LIke : {post.Like} Comment : {post.Comment.Count}");
+        Console.WriteLine("||-[Press l to like and r to read comment]||");
+        Console.WriteLine("||-[Press Enter and Esc to go Menu]-------||");
+        Console.WriteLine("||========================================||");
+    }
+
+    public static void AddPost(User currentUser)
+    {
+        Console.Clear();
+        Console.WriteLine("||==================Post==================||");
+        Console.Write("||Topic : ");
+        string topic = Console.ReadLine();
+        Console.Write("||Content : ");
+        string content = Console.ReadLine();
+        currentUser.AddPosts(new Post(currentUser.Posts.Count, currentUser.UserId, topic, content, 0));
+        Console.WriteLine("||========================================||");
     }
 
     public static void Chat(List<User> users)
@@ -380,6 +481,18 @@ class Program
     public static void pathHome(string path, List<User> users, List<Pet> pets, User currentUser)
     {
         ConsoleKeyInfo key;
+
+        foreach (User user in users)
+        {
+            foreach (Pet pet in pets)
+            {
+                if (user.UserId == pet.UserId)
+                {
+                    user.AddPets(pet);
+                }
+            };
+        }
+
         switch (path)
         {
             case "Search":
@@ -392,6 +505,17 @@ class Program
                 pathHome("Home", users, pets, currentUser);
                 break;
             case "Feed":
+                Console.Clear();
+                Feed(users, currentUser);
+                do
+                {
+                    key = Console.ReadKey();
+                    if (key.Key == ConsoleKey.OemPlus)
+                    {
+                        AddPost(currentUser);
+                    }
+                } while (key.Key != ConsoleKey.Escape);
+                pathHome("Home", users, pets, currentUser);
                 break;
             case "Profile":
                 Console.Clear();
@@ -399,6 +523,12 @@ class Program
                 do
                 {
                     key = Console.ReadKey();
+                    if (key.Key == ConsoleKey.OemPlus)
+                    {
+                        Pet newPet = AddPetUI(pets.Count, currentUser.UserId);
+                        pets.Add(newPet);
+                        Console.Clear();
+                    }
                 } while (key.Key != ConsoleKey.Escape);
                 pathHome("Home", users, pets, currentUser);
                 break;
@@ -436,21 +566,10 @@ class Program
 
     public static void Main(string[] args)
     {
-        List<User> users = AddUser();
-        List<Pet> pets = AddPet();
+        List<User> users = DefaultUser();
+        List<Pet> pets = DefaultPet();
         string path = "Home";
         User currentUser;
-
-        foreach (User user in users)
-        {
-            foreach (Pet pet in pets)
-            {
-                if (user.UserId == pet.UserId)
-                {
-                    user.AddPets(pet);
-                }
-            };
-        }
 
         bool logInOrSignIn = LogInOrSignIn();
         if (logInOrSignIn)
@@ -461,6 +580,7 @@ class Program
                 users.Add(currentUser);
                 Console.Clear();
                 path = Home();
+                pathHome(path, users, pets, currentUser);
             }
         }
         else
@@ -470,9 +590,9 @@ class Program
             {
                 Console.Clear();
                 path = Home();
+                pathHome(path, users, pets, currentUser);
             }
         }
-        pathHome(path, users, pets, currentUser);
     }
 
 }

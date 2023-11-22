@@ -1,44 +1,37 @@
-public class Post
+public class Comment
 {
-    public string UserId { get; set; }
-    public string Topic { get; set; }
-    public string Content { get; set; }
-    public int CountLike { get; set; }
+    public int UserId { get; set; }
+    public string CommentText { get; set; }
 
-    public Post(
-        string Topic,
-        string Content,
-        int CountLike
-        )
+    public Comment(int UserId, string CommentText)
     {
-        this.Topic = Topic;
-        this.Content = Content;
-        this.CountLike = CountLike;
+        this.UserId = UserId;
+        this.CommentText = CommentText;
     }
 }
 
-public class Feed
+public class Post
 {
     public int PostId { get; set; }
     public int UserId { get; set; }
-    public List<Post> Posts;
-    public string Comment { get; set; }
-    public bool Like { get; set; }
+    public string Topic { get; set; }
+    public string Content { get; set; }
+    public int Like { get; set; }
+    public List<Comment> Comment;
 
-    public Feed(
+    public Post(
         int PostId,
-        string Comment,
-        bool Like
-    )
+        int UserId,
+        string Topic,
+        string Content,
+        int Like
+        )
     {
         this.PostId = PostId;
-        this.Posts = new List<Post>();
-        this.Comment = Comment;
+        this.UserId = UserId;
+        this.Topic = Topic;
+        this.Content = Content;
         this.Like = Like;
-    }
-
-    public void AddPost(Post post)
-    {
-        Posts.Add(post);
+        this.Comment = new List<Comment>();
     }
 }
