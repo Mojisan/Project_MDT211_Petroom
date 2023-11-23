@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using System.Transactions;
 
 class Program
 {
@@ -123,7 +124,6 @@ class Program
     public static void SearchUI(List<User> users, List<Pet> pets)
     {
         Console.WriteLine("||=================Search=================||");
-        /* Console.WriteLine("User: {0}", currentUser); */
         Console.WriteLine("||-[Esc to Exit]--------------------------||");
         Console.Write("||Keyword : ");
         string keyword = Console.ReadLine();
@@ -250,6 +250,14 @@ class Program
                         AddPost(currentUser);
                         Feed(users, currentUser);
                     }
+                    else if (key.Key == ConsoleKey.L)
+                    {
+                        user.Posts[idPost].Like++;
+                    }
+                    else if (key.Key == ConsoleKey.R)
+                    {
+                        CommentPost(user.Posts[idPost], users, currentUser);
+                    }
                 } while (key.Key != ConsoleKey.Enter);
             }
             else
@@ -261,6 +269,45 @@ class Program
         {
             Console.WriteLine("||None Post!!");
         }
+    }
+
+    public static void CommentPost(Post post, List<User> users, User currentUser)
+    {
+        Console.WriteLine("|================Comment=================||");
+        Console.WriteLine("||-[Press + to Comment]------------------||");
+        foreach (Comment comment in post.Comment)
+        {
+            string username = "";
+            foreach (User user in users)
+            {
+                if (user.UserId == comment.UserId)
+                {
+                    username = user.Username;
+                }
+            }
+            Console.WriteLine($"||Username : {username}");
+            Console.WriteLine($"||Comment : {comment.CommentText}");
+            Console.WriteLine("||========================================||");
+        };
+        ConsoleKeyInfo key;
+        do
+        {
+            key = Console.ReadKey();
+            if (key.Key == ConsoleKey.OemPlus)
+            {
+                Console.Clear();
+                post.Comment.Add(AddComment(currentUser));
+            }
+        } while (key.Key != ConsoleKey.Enter);
+    }
+
+    public static Comment AddComment(User currentUser)
+    {
+        Console.WriteLine("||================Comment=================||");
+        Console.Write("||Comment : ");
+        string comment = Console.ReadLine();
+        Console.WriteLine("||========================================||");
+        return new Comment(currentUser.UserId, comment);
     }
 
     public static void PostUI(Post post, User user)
