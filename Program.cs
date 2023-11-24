@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Security.Cryptography.X509Certificates;
 using System.Transactions;
 
@@ -45,7 +46,7 @@ class Program
         Console.WriteLine("||Image : {0}", user.ImageUser);
         Console.WriteLine("||Email : {0}", user.Email);
         Console.WriteLine("||==============Profile Pet===============||");
-        if (user.Pets != null && user.Pets.Any())
+        if (user.Pets.Count > 0)
         {
             foreach (Pet pet in user.Pets)
             {
@@ -187,6 +188,108 @@ class Program
         return -1;
     }
 
+    public static void SearchUI2(List<User> users, List<Pet> pets, User currentUser)
+    {
+        Console.WriteLine("||=================Search=================||");
+        Console.WriteLine("||-[Esc to Exit]--------------------------||");
+        Console.Write("||Keyword : ");
+        string keyword = Console.ReadLine();
+        Console.WriteLine("||----------------------------------------||");
+        List<string> Option = new List<string>();
+        foreach (User user in users)
+        {
+            if (user.Username.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                Option.Add(user.Username);
+            }
+        }
+
+        foreach (Pet pet in pets)
+        {
+            if ((pet.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0) || (pet.Specie.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0))
+            {
+                Option.Add(pet.Name);
+            }
+        }
+
+        ConsoleKeyInfo key;
+        int selectedIndex = 0;
+        do
+        {
+            if (Option.Count > 0)
+            {
+                Console.Clear();
+                Console.WriteLine("||=================Search=================||");
+                for (int i = 0; i < Option.Count; i++)
+                {
+                    if (i == selectedIndex)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Gray;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+                    Console.Write("||");
+                    Console.WriteLine(Option[i]);
+
+                    Console.ResetColor();
+                }
+            }
+            else
+            {
+                Console.WriteLine("||Not found!!");
+            }
+
+            key = Console.ReadKey();
+
+            if ((key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.D) && selectedIndex < Option.Count - 1)
+            {
+                selectedIndex++;
+            }
+            else if ((key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.A) && selectedIndex > 0)
+            {
+                selectedIndex--;
+            }
+            else if (key.Key == ConsoleKey.Escape)
+            {
+                pathHome("Home", users, pets, currentUser);
+            }
+
+        } while (key.Key != ConsoleKey.Enter);
+
+        Console.Clear();
+        foreach (User user in users)
+        {
+            if (user.Username.Contains(Option[selectedIndex]))
+            {
+                Profile(user);
+                Console.WriteLine("||-[C to Chat]----------------------------||");
+                do
+                {
+                    key = Console.ReadKey();
+                    if (key.Key == ConsoleKey.C)
+                    {
+                        Chat(user, currentUser);
+                    }
+                } while (key.Key != ConsoleKey.Escape);
+            }
+        }
+        foreach (Pet pet in pets)
+        {
+            if (pet.Name.Contains(Option[selectedIndex]) || pet.Specie.Contains(Option[selectedIndex]))
+            {
+                Profile(users[pet.UserId - 1]);
+                Console.WriteLine("||-[C to Chat]----------------------------||");
+                do
+                {
+                    key = Console.ReadKey();
+                    if (key.Key == ConsoleKey.C)
+                    {
+                        Chat(users[pet.UserId - 1], currentUser);
+                    }
+                } while (key.Key != ConsoleKey.Escape);
+            }
+        }
+    }
+
     public static Pet AddPetUI(int idPet, int idUser)
     {
         Console.WriteLine("|=================Add Pet================||");
@@ -237,11 +340,11 @@ class Program
                     FeedHeadlineText();
                     PostUI(user.Posts[idPost], user);
                     key = Console.ReadKey();
-                    if ((key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.D) && idPost < user.Posts.Count - 1)
+                    if ((key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.D) && idPost < user.Posts.Count - 1)
                     {
                         idPost++;
                     }
-                    else if ((key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.A) && idPost > 0)
+                    else if ((key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.A) && idPost > 0)
                     {
                         idPost--;
                     }
@@ -333,47 +436,27 @@ class Program
         Console.WriteLine("||========================================||");
     }
 
-    public static void Chat(List<User> users,User currentUser)
+    public static void MatchUI()
     {
+
+    }
+
+    public static void Chat(User user, User currentUser)
+    {
+        Console.Clear();
         ConsoleKeyInfo key;
-        Console.WriteLine("||======Search User You Want To Chat======||");
+        Console.WriteLine("||==================Chat==================||");
         Console.WriteLine("||-[Esc to Exit]--------------------------||");
-        Console.Write("||Keyword : ");
-        string keyword = Console.ReadLine();
-        Console.WriteLine("||----------------------------------------||");
-        bool check = true;
-        while (check)
-        {
-            int tempCount = 0;
-            foreach (User user in users)
-            {
-                User Find = Search(keyword, user);
-                if (Find != null)
-                {
-                    Console.WriteLine("You are current chat with " + user.Username);
-                }
-                else if (Find == null)
-                {
-                    tempCount++;
-                }
-            }
-            if (tempCount == users.Count && check)
-            {
-                Console.WriteLine("||Not Found!!");
-            }
-            while(true)//Chat Module
-            {
-                string text = Console.ReadLine();
-                Console.WriteLine(currentUser.Username + " : " + text);
-                if(text == "leave") break;
-            }
-            check = false;
-        }
-        Console.WriteLine("||===============End of Search============||");
+        Console.WriteLine("||You are current chat with " + user.Username);
         do
         {
             key = Console.ReadKey();
+            Console.Write("||Message : ");
+            string text = Console.ReadLine();
+            Console.WriteLine($"||{currentUser.Username} : {text}");
         } while (key.Key != ConsoleKey.Escape);
+        Console.Clear();
+        Profile(user);
     }
 
     public static void GroupChat(List<User> users, User currentUser)
@@ -382,7 +465,7 @@ class Program
         ConsoleKeyInfo key;
         do
         {
-            while(true)
+            while (true)
             {
                 Console.WriteLine("||Search User You Want To Add To Group Chat||");
                 Console.Write("||Keyword : ");
@@ -410,19 +493,19 @@ class Program
                     }
                     check = false;
                 }
-                if(keyword == "leave") 
+                if (keyword == "leave")
                 {
                     Console.WriteLine("||===============End of Search============||");
-                    while(true)//Chat Module
+                    while (true)//Chat Module
                     {
                         string text = Console.ReadLine();
                         Console.WriteLine(currentUser.Username + " : " + text);
-                        if(text == "leave") break;
+                        if (text == "leave") break;
                     }
                     break;
                 }
             }
-            key = Console.ReadKey();           
+            key = Console.ReadKey();
         } while (key.Key != ConsoleKey.Escape);
     }
 
@@ -482,7 +565,7 @@ class Program
 
     public static string Home()
     {
-        string[] options = { "Search", "Feed", "Profile", "Match", "Chat", "Group" };
+        string[] options = { "Search", "Feed", "Profile", "Match", "Group" };
         int selectedIndex = 0;
         ConsoleKeyInfo key;
 
@@ -539,13 +622,22 @@ class Program
         {
             return "Group";
         }
-        else if (options[selectedIndex].Contains("Chat"))
-        {
-            return "Chat";
-        }
         else
         {
             return "Match";
+        }
+    }
+
+    public static void MatchPetAndUser(List<User> users, List<Pet> pets, Pet pet)
+    {
+        pets.Add(pet);
+        foreach (User user in users)
+        {
+            if (user.UserId == pets[pets.Count - 1].UserId)
+            {
+                user.AddPets(pet);
+            }
+
         }
     }
 
@@ -553,22 +645,11 @@ class Program
     {
         ConsoleKeyInfo key;
 
-        foreach (User user in users)
-        {
-            foreach (Pet pet in pets)
-            {
-                if (user.UserId == pet.UserId)
-                {
-                    user.AddPets(pet);
-                }
-            };
-        }
-
         switch (path)
         {
             case "Search":
                 Console.Clear();
-                SearchUI(users, pets);
+                SearchUI2(users, pets, currentUser);
                 do
                 {
                     key = Console.ReadKey();
@@ -597,7 +678,7 @@ class Program
                     if (key.Key == ConsoleKey.OemPlus)
                     {
                         Pet newPet = AddPetUI(pets.Count, currentUser.UserId);
-                        pets.Add(newPet);
+                        MatchPetAndUser(users, pets, newPet);
                         Console.Clear();
                     }
                 } while (key.Key != ConsoleKey.Escape);
@@ -605,16 +686,7 @@ class Program
                 break;
             case "Group":
                 Console.Clear();
-                GroupChat(users,currentUser);
-                do
-                {
-                    key = Console.ReadKey();
-                } while (key.Key != ConsoleKey.Escape);
-                pathHome("Home", users, pets, currentUser);
-                break;
-            case "Chat":
-                Console.Clear();
-                Chat(users, currentUser);
+                GroupChat(users, currentUser);
                 do
                 {
                     key = Console.ReadKey();
@@ -641,6 +713,17 @@ class Program
         List<Pet> pets = DefaultPet();
         string path = "Home";
         User currentUser;
+
+        foreach (User user in users)
+        {
+            foreach (Pet pet in pets)
+            {
+                if (user.UserId == pet.UserId)
+                {
+                    user.AddPets(pet);
+                }
+            };
+        }
 
         bool logInOrSignIn = LogInOrSignIn();
         if (logInOrSignIn)
