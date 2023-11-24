@@ -333,7 +333,7 @@ class Program
         Console.WriteLine("||========================================||");
     }
 
-    public static void Chat(List<User> users)
+    public static void Chat(List<User> users,User currentUser)
     {
         ConsoleKeyInfo key;
         Console.WriteLine("||======Search User You Want To Chat======||");
@@ -344,6 +344,7 @@ class Program
         bool check = true;
         while (check)
         {
+            int tempCount = 0;
             foreach (User user in users)
             {
                 User Find = Search(keyword, user);
@@ -351,12 +352,22 @@ class Program
                 {
                     Console.WriteLine("You are current chat with " + user.Username);
                 }
+                else if (Find == null)
+                {
+                    tempCount++;
+                }
             }
-            if (Search(keyword, users[users.Count - 1]) == null && check)
+            if (tempCount == users.Count && check)
             {
                 Console.WriteLine("||Not Found!!");
-                check = false;
             }
+            while(true)//Chat Module
+            {
+                string text = Console.ReadLine();
+                Console.WriteLine(currentUser.Username + " : " + text);
+                if(text == "leave") break;
+            }
+            check = false;
         }
         Console.WriteLine("||===============End of Search============||");
         do
@@ -364,41 +375,54 @@ class Program
             key = Console.ReadKey();
         } while (key.Key != ConsoleKey.Escape);
     }
-    public static void GroupChat(List<User> users)
+
+    public static void GroupChat(List<User> users, User currentUser)
     {
         List<string> groupMember = new List<string>();
         ConsoleKeyInfo key;
         do
         {
-            Console.WriteLine("||Search User You Want To Add To Group Chat||");
-            Console.WriteLine("||-[Esc to Exit]--------------------------||");
-            Console.Write("||Keyword : ");
-            string keyword = Console.ReadLine();
-            Console.WriteLine("||----------------------------------------||");
-            bool check = true;
-            while (check)
+            while(true)
             {
-                foreach (User user in users)
+                Console.WriteLine("||Search User You Want To Add To Group Chat||");
+                Console.Write("||Keyword : ");
+                string keyword = Console.ReadLine();
+                Console.WriteLine("||----------------------------------------||");
+                bool check = true;
+                while (check)
                 {
-                    User Find = Search(keyword, user);
-                    if (Find != null)
+                    int tempCount = 0;
+                    foreach (User user in users)
                     {
-                        groupMember.Add(user.Username);
-                        Console.WriteLine("Current Member In Group Chat :");
-                        foreach (string member in groupMember)
+                        User Find = Search(keyword, user);
+                        if (Find != null)
                         {
-                            Console.WriteLine(member);
+                            Console.WriteLine(user.Username + " Join a Group Chat ");
+                        }
+                        else if (Find == null)
+                        {
+                            tempCount++;
                         }
                     }
-                }
-                if (Search(keyword, users[users.Count - 1]) == null && check)
-                {
-                    Console.WriteLine("||Not Found!!");
+                    if (tempCount == users.Count && check && keyword != "leave")
+                    {
+                        Console.WriteLine("||Not Found!!");
+                    }
                     check = false;
                 }
+                if(keyword == "leave") 
+                {
+                    Console.WriteLine("||===============End of Search============||");
+                    while(true)//Chat Module
+                    {
+                        string text = Console.ReadLine();
+                        Console.WriteLine(currentUser.Username + " : " + text);
+                        if(text == "leave") break;
+                    }
+                    break;
+                }
             }
-            Console.WriteLine("||===============End of Search============||");
-            key = Console.ReadKey();
+            key = Console.ReadKey();           
         } while (key.Key != ConsoleKey.Escape);
     }
 
@@ -581,7 +605,7 @@ class Program
                 break;
             case "Group":
                 Console.Clear();
-                GroupChat(users);
+                GroupChat(users,currentUser);
                 do
                 {
                     key = Console.ReadKey();
@@ -590,7 +614,7 @@ class Program
                 break;
             case "Chat":
                 Console.Clear();
-                Chat(users);
+                Chat(users, currentUser);
                 do
                 {
                     key = Console.ReadKey();
