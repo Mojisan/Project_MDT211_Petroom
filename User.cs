@@ -46,10 +46,11 @@ public class Group
     public string GroupName { get; set; }
     public List<User> member;
 
-    public Group(string name)
+    public Group(string name, User user)
     {
         this.GroupName = name;
         this.member = new List<User>();
+        this.member.Add(user);
     }
 
     public void JoinGroup(User user)

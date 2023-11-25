@@ -69,13 +69,31 @@ class Program
         Console.WriteLine("||========================================||");
     }
 
+    public static string HiddenPassword()
+    {
+        string input = "";
+        ConsoleKeyInfo key;
+        do
+        {
+            key = Console.ReadKey(true);
+            if (key.Key != ConsoleKey.Enter)
+            {
+                input += key.KeyChar;
+                Console.Write("*");
+            }
+        } while (key.Key != ConsoleKey.Enter);
+
+        Console.WriteLine();
+        return input;
+    }
+
     public static User SignIn(int idUser)
     {
         Console.WriteLine("||================Sign In=================||");
         Console.Write("||Username : ");
         string usernameSignIn = Console.ReadLine();
         Console.Write("||Password : ");
-        string passwordSignIn = Console.ReadLine();
+        string passwordSignIn = HiddenPassword();
         Console.Write("||Age : ");
         int ageSignIn = int.Parse(Console.ReadLine());
         Console.Write("||Number : ");
@@ -94,7 +112,7 @@ class Program
         Console.Write("||Username : ");
         string usernameLogIn = Console.ReadLine();
         Console.Write("||Password : ");
-        string passwordLogIn = Console.ReadLine();
+        string passwordLogIn = HiddenPassword();
         Console.WriteLine("||========================================||");
         User userLoginComplete = null;
         foreach (User user in users)
@@ -188,7 +206,7 @@ class Program
         return -1;
     }
 
-    public static void SearchUI2(List<User> users, List<Pet> pets, User currentUser)
+    public static void SearchUI2(List<User> users, List<Pet> pets, User currentUser, List<Group> groups)
     {
         Console.WriteLine("||=================Search=================||");
         Console.WriteLine("||-[Esc to Exit]--------------------------||");
@@ -250,7 +268,7 @@ class Program
             }
             else if (key.Key == ConsoleKey.Escape)
             {
-                pathHome("Home", users, pets, currentUser);
+                pathHome("Home", users, pets, currentUser, groups);
             }
 
         } while (key.Key != ConsoleKey.Enter);
@@ -568,61 +586,11 @@ class Program
         Profile(user);
     }
 
-    public static void GroupChat(List<User> users, User currentUser)
+    public static void GroupUI(User currentUser, List<Group> groups)
     {
-        List<string> groupMember = new List<string>();
-        ConsoleKeyInfo key;
-        do
-        {
-            while (true)
-            {
-                Console.WriteLine("||Search User You Want To Add To Group Chat||");
-                Console.Write("||Keyword : ");
-                string keyword = Console.ReadLine();
-                Console.WriteLine("||----------------------------------------||");
-                bool check = true;
-                while (check)
-                {
-                    int tempCount = 0;
-                    foreach (User user in users)
-                    {
-                        User Find = Search(keyword, user);
-                        if (Find != null)
-                        {
-                            Console.WriteLine(user.Username + " Join a Group Chat ");
-                        }
-                        else if (Find == null)
-                        {
-                            tempCount++;
-                        }
-                    }
-                    if (tempCount == users.Count && check && keyword != "leave")
-                    {
-                        Console.WriteLine("||Not Found!!");
-                    }
-                    check = false;
-                }
-                if (keyword == "leave")
-                {
-                    Console.WriteLine("||===============End of Search============||");
-                    while (true)//Chat Module
-                    {
-                        string text = Console.ReadLine();
-                        Console.WriteLine(currentUser.Username + " : " + text);
-                        if (text == "leave") break;
-                    }
-                    break;
-                }
-            }
-            key = Console.ReadKey();
-        } while (key.Key != ConsoleKey.Escape);
-    }
-
-    public static void GroupUI(List<User> users, List<Pet> pets, User currentUser)
-    {
+        Console.Clear();
         Console.WriteLine("||=================Group==================||");
         Console.WriteLine("||-[Esc to Exit]--------------------------||");
-        List<Group> groups = new List<Group>();
         List<string> nameGroup = new List<string>();
         ConsoleKeyInfo key;
         int selectedIndex = 0;
@@ -653,7 +621,6 @@ class Program
             {
                 Console.WriteLine("||None group!!");
             }
-            Console.WriteLine("||-[Press + to Create Group]--------------||");
             key = Console.ReadKey();
             if ((key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.D) && selectedIndex < nameGroup.Count - 1)
             {
@@ -666,15 +633,21 @@ class Program
             else if (key.Key == ConsoleKey.OemPlus)
             {
                 groups.Add(CreateGroup(currentUser));
-                pathHome("Home", users, pets, currentUser);
+                Console.Clear();
+                GroupUI(currentUser, groups);
             }
         } while (key.Key != ConsoleKey.Enter);
 
-        /* Console.Clear();
-        if (nameGroup.Count > 0)
+        do
         {
-            GroupMember(groups[selectedIndex], currentUser);
-        } */
+            Console.Clear();
+            GroupMember(groups[selectedIndex]);
+            key = Console.ReadKey();
+            if (key.Key == ConsoleKey.J)
+            {
+                groups[selectedIndex].JoinGroup(currentUser);
+            }
+        } while (key.Key != ConsoleKey.Enter);
     }
 
     public static Group CreateGroup(User currentUser)
@@ -683,13 +656,12 @@ class Program
         Console.WriteLine("||==============Create Group=============||");
         Console.Write("||Group Name : ");
         string groupName = Console.ReadLine();
-        Group newGroup = new Group(groupName);
-        newGroup.JoinGroup(currentUser);
+        Group newGroup = new Group(groupName, currentUser);
         Console.WriteLine("||=======================================||");
         return newGroup;
     }
 
-    public static void GroupMember(Group group, User currentUser)
+    public static void GroupMember(Group group)
     {
         Console.WriteLine("||=================Group=================||");
         Console.WriteLine($"||Group Name : {group.GroupName}");
@@ -698,17 +670,7 @@ class Program
         {
             Console.WriteLine($"||{groupMember.Username}");
         }
-        Console.WriteLine("||-[Press + to Join Group]---------------||");
-        Console.WriteLine("||=======================================||");
-        ConsoleKeyInfo key;
-        do
-        {
-            key = Console.ReadKey();
-            if (key.Key == ConsoleKey.OemPlus)
-            {
-                group.JoinGroup(currentUser);
-            }
-        } while (key.Key != ConsoleKey.Enter);
+        Console.WriteLine("||-[Press J to Join Group]---------------||");
     }
 
     public static bool LogInOrSignIn()
@@ -843,7 +805,7 @@ class Program
         }
     }
 
-    public static void pathHome(string path, List<User> users, List<Pet> pets, User currentUser)
+    public static void pathHome(string path, List<User> users, List<Pet> pets, User currentUser, List<Group> groups)
     {
         ConsoleKeyInfo key;
 
@@ -851,12 +813,12 @@ class Program
         {
             case "Search":
                 Console.Clear();
-                SearchUI2(users, pets, currentUser);
+                SearchUI2(users, pets, currentUser, groups);
                 do
                 {
                     key = Console.ReadKey();
                 } while (key.Key != ConsoleKey.Escape);
-                pathHome("Home", users, pets, currentUser);
+                pathHome("Home", users, pets, currentUser, groups);
                 break;
             case "Feed":
                 Console.Clear();
@@ -869,7 +831,7 @@ class Program
                         AddPost(currentUser);
                     }
                 } while (key.Key != ConsoleKey.Escape);
-                pathHome("Home", users, pets, currentUser);
+                pathHome("Home", users, pets, currentUser, groups);
                 break;
             case "Profile":
                 Console.Clear();
@@ -884,17 +846,24 @@ class Program
                         Console.Clear();
                     }
                 } while (key.Key != ConsoleKey.Escape);
-                pathHome("Home", users, pets, currentUser);
+                pathHome("Home", users, pets, currentUser, groups);
                 break;
             case "Group":
-                Console.Clear();
-                /* GroupChat(users, currentUser); */
-                GroupUI(users, pets, currentUser);
+                GroupUI(currentUser, groups);
+                /* Console.Write("InputNameGroup : ");
+                string nameGroup = Console.ReadLine();
+                groups.Add(new Group(nameGroup, currentUser));
+                Console.WriteLine(groups[0].GroupName);
+                Console.WriteLine(groups[0].member.Count);
+                foreach (Group group in groups)
+                {
+                    Console.WriteLine(group.GroupName);
+                } */
                 do
                 {
                     key = Console.ReadKey();
                 } while (key.Key != ConsoleKey.Escape);
-                pathHome("Home", users, pets, currentUser);
+                pathHome("Home", users, pets, currentUser, groups);
                 break;
             case "Match":
                 Console.Clear();
@@ -903,12 +872,12 @@ class Program
                 {
                     key = Console.ReadKey();
                 } while (key.Key != ConsoleKey.Escape);
-                pathHome("Home", users, pets, currentUser);
+                pathHome("Home", users, pets, currentUser, groups);
                 break;
             case "Home":
                 Console.Clear();
                 path = Home();
-                pathHome(path, users, pets, currentUser);
+                pathHome(path, users, pets, currentUser, groups);
                 break;
             default:
                 Console.Clear();
@@ -921,6 +890,8 @@ class Program
     {
         List<User> users = DefaultUser();
         List<Pet> pets = DefaultPet();
+        List<Group> groups = new List<Group>();
+        groups.Add(new Group("Default Group", users[0]));
         string path = "Home";
         User currentUser;
 
@@ -944,7 +915,7 @@ class Program
                 users.Add(currentUser);
                 Console.Clear();
                 path = Home();
-                pathHome(path, users, pets, currentUser);
+                pathHome(path, users, pets, currentUser, groups);
             }
         }
         else
@@ -954,7 +925,7 @@ class Program
             {
                 Console.Clear();
                 path = Home();
-                pathHome(path, users, pets, currentUser);
+                pathHome(path, users, pets, currentUser, groups);
             }
         }
     }
