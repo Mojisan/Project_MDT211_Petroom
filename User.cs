@@ -41,43 +41,19 @@ public class User
     }
 }
 
+public class Group
+{
+    public string GroupName { get; set; }
+    public List<User> member;
 
+    public Group(string name)
+    {
+        this.GroupName = name;
+        this.member = new List<User>();
+    }
 
-/* string[] options = { "Option 1", "Option 2", "Option 3" };
-        int selectedIndex = 0;
-
-        ConsoleKeyInfo key;
-
-        do
-        {
-            Console.Clear();
-            for (int i = 0; i < options.Length; i++)
-            {
-                if (i == selectedIndex)
-                {
-                    Console.BackgroundColor = ConsoleColor.Gray;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                }
-
-                Console.WriteLine(options[i]);
-
-                Console.ResetColor();
-            }
-
-            key = Console.ReadKey();
-
-            switch (key.Key)
-            {
-                case ConsoleKey.LeftArrow:
-                    selectedIndex = (selectedIndex - 1 + options.Length) % options.Length;
-                    break;
-
-                case ConsoleKey.RightArrow:
-                    selectedIndex = (selectedIndex + 1) % options.Length;
-                    break;
-            }
-
-        } while (key.Key != ConsoleKey.Enter);
-
-        Console.Clear();
-        Console.WriteLine($"You selected: {options[selectedIndex]}");*/
+    public void JoinGroup(User user)
+    {
+        member.Add(user);
+    }
+}

@@ -436,9 +436,118 @@ class Program
         Console.WriteLine("||========================================||");
     }
 
-    public static void MatchUI()
+    public static void MatchUI(List<Pet> pets_User, List<Pet> pets, List<User> users)
     {
+        Console.WriteLine("||=================Match==================||");
+        Console.WriteLine("||-[Esc to Exit]--------------------------||");
+        Console.WriteLine("||----------------------------------------||");
+        List<string> pet_name = new List<string>();
+        int selectedIndex = 0;
+        ConsoleKeyInfo key;
+        foreach (Pet pet_User in pets_User)
+        {
+            pet_name.Add(pet_User.Name);
+        }
 
+        do
+        {
+            if (pet_name.Count > 0)
+            {
+                Console.Clear();
+                Console.WriteLine("||=================Your Pet===============||");
+                for (int i = 0; i < pet_name.Count; i++)
+                {
+                    if (i == selectedIndex)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Gray;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+                    Console.Write("||");
+                    Console.WriteLine(pet_name[i]);
+
+                    Console.ResetColor();
+                }
+            }
+            else
+            {
+                Console.WriteLine("||You don't have pet!!");
+            }
+
+            key = Console.ReadKey();
+
+            if ((key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.D) && selectedIndex < pet_name.Count - 1)
+            {
+                selectedIndex++;
+            }
+            else if ((key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.A) && selectedIndex > 0)
+            {
+                selectedIndex--;
+            }
+        } while (key.Key != ConsoleKey.Enter);
+
+        if (pet_name.Count > 0)
+        {
+            Console.Clear();
+            Console.WriteLine("||=================Match==================||");
+            Console.WriteLine("||-[Esc to Exit]--------------------------||");
+            Console.WriteLine("||----------------------------------------||");
+            Pet selectPetUser = pets_User[selectedIndex];
+            List<Pet> selectPetSystem = new List<Pet>();
+            foreach (Pet pet in pets)
+            {
+                if (selectPetUser.Specie.IndexOf(pet.Specie, StringComparison.OrdinalIgnoreCase) >= 0 && selectPetUser.Sex != pet.Sex)
+                {
+                    selectPetSystem.Add(pet);
+                }
+            }
+            selectedIndex = 0;
+            do
+            {
+                if (selectPetSystem.Count > 0)
+                {
+                    Console.Clear();
+                    Console.WriteLine("||=============Compatible Pets============||");
+                    Console.WriteLine("||-[Esc to Exit]--------------------------||");
+                    for (int i = 0; i < selectPetSystem.Count; i++)
+                    {
+                        if (i == selectedIndex)
+                        {
+                            Console.BackgroundColor = ConsoleColor.Gray;
+                            Console.ForegroundColor = ConsoleColor.Black;
+                        }
+                        Console.Write("||");
+                        Console.WriteLine(selectPetSystem[i].Name);
+
+                        Console.ResetColor();
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("||Don't match your pet!!");
+                }
+
+                key = Console.ReadKey();
+
+                if ((key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.D) && selectedIndex < pet_name.Count - 1)
+                {
+                    selectedIndex++;
+                }
+                else if ((key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.A) && selectedIndex > 0)
+                {
+                    selectedIndex--;
+                }
+            } while (key.Key != ConsoleKey.Enter);
+
+            if (selectPetSystem.Count > 0)
+            {
+                Console.Clear();
+                Profile(users[selectPetSystem[selectedIndex].UserId]);
+                do
+                {
+                    Chat(users[selectPetSystem[selectedIndex].UserId - 1], users[pets_User[0].UserId - 1]);
+                } while (key.Key != ConsoleKey.Enter);
+            }
+        }
     }
 
     public static void Chat(User user, User currentUser)
@@ -507,6 +616,99 @@ class Program
             }
             key = Console.ReadKey();
         } while (key.Key != ConsoleKey.Escape);
+    }
+
+    public static void GroupUI(List<User> users, List<Pet> pets, User currentUser)
+    {
+        Console.WriteLine("||=================Group==================||");
+        Console.WriteLine("||-[Esc to Exit]--------------------------||");
+        List<Group> groups = new List<Group>();
+        List<string> nameGroup = new List<string>();
+        ConsoleKeyInfo key;
+        int selectedIndex = 0;
+        foreach (Group group in groups)
+        {
+            nameGroup.Add(group.GroupName);
+        }
+        do
+        {
+            if (nameGroup.Count > 0)
+            {
+                Console.Clear();
+                Console.WriteLine("||==============Choose Group==============||");
+                for (int i = 0; i < nameGroup.Count; i++)
+                {
+                    if (i == selectedIndex)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Gray;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+                    Console.Write("||");
+                    Console.WriteLine(nameGroup[i]);
+
+                    Console.ResetColor();
+                }
+            }
+            else
+            {
+                Console.WriteLine("||None group!!");
+            }
+            Console.WriteLine("||-[Press + to Create Group]--------------||");
+            key = Console.ReadKey();
+            if ((key.Key == ConsoleKey.RightArrow || key.Key == ConsoleKey.D) && selectedIndex < nameGroup.Count - 1)
+            {
+                selectedIndex++;
+            }
+            else if ((key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.A) && selectedIndex > 0)
+            {
+                selectedIndex--;
+            }
+            else if (key.Key == ConsoleKey.OemPlus)
+            {
+                groups.Add(CreateGroup(currentUser));
+                pathHome("Home", users, pets, currentUser);
+            }
+        } while (key.Key != ConsoleKey.Enter);
+
+        /* Console.Clear();
+        if (nameGroup.Count > 0)
+        {
+            GroupMember(groups[selectedIndex], currentUser);
+        } */
+    }
+
+    public static Group CreateGroup(User currentUser)
+    {
+        Console.Clear();
+        Console.WriteLine("||==============Create Group=============||");
+        Console.Write("||Group Name : ");
+        string groupName = Console.ReadLine();
+        Group newGroup = new Group(groupName);
+        newGroup.JoinGroup(currentUser);
+        Console.WriteLine("||=======================================||");
+        return newGroup;
+    }
+
+    public static void GroupMember(Group group, User currentUser)
+    {
+        Console.WriteLine("||=================Group=================||");
+        Console.WriteLine($"||Group Name : {group.GroupName}");
+        Console.WriteLine("||Member : ");
+        foreach (User groupMember in group.member)
+        {
+            Console.WriteLine($"||{groupMember.Username}");
+        }
+        Console.WriteLine("||-[Press + to Join Group]---------------||");
+        Console.WriteLine("||=======================================||");
+        ConsoleKeyInfo key;
+        do
+        {
+            key = Console.ReadKey();
+            if (key.Key == ConsoleKey.OemPlus)
+            {
+                group.JoinGroup(currentUser);
+            }
+        } while (key.Key != ConsoleKey.Enter);
     }
 
     public static bool LogInOrSignIn()
@@ -686,7 +888,8 @@ class Program
                 break;
             case "Group":
                 Console.Clear();
-                GroupChat(users, currentUser);
+                /* GroupChat(users, currentUser); */
+                GroupUI(users, pets, currentUser);
                 do
                 {
                     key = Console.ReadKey();
@@ -694,6 +897,13 @@ class Program
                 pathHome("Home", users, pets, currentUser);
                 break;
             case "Match":
+                Console.Clear();
+                MatchUI(currentUser.Pets, pets, users);
+                do
+                {
+                    key = Console.ReadKey();
+                } while (key.Key != ConsoleKey.Escape);
+                pathHome("Home", users, pets, currentUser);
                 break;
             case "Home":
                 Console.Clear();
