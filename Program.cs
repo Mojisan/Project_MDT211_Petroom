@@ -818,7 +818,7 @@ class Program
                 Console.Clear();
                 Profile(currentUser);
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("||-[Press + to Add Pet]------------------||");
+                Console.WriteLine("||-[Press + to Add Pet]-------------------||");
                 do
                 {
                     key = Console.ReadKey();
