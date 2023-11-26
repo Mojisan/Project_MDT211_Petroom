@@ -8,8 +8,7 @@ class Program
 {
     public static void OpenApp()
     {
-        // 12345
-        /*Output*/
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||========================================||");
         Console.WriteLine("||====                                ====||");
         Console.WriteLine("||==         Welcome to Petroom         ==||");
@@ -38,34 +37,40 @@ class Program
 
     public static void Profile(User user)
     {
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||==============Profile User==============||");
         Console.WriteLine("||-[Esc to Exit]--------------------------||");
-        Console.WriteLine("||Username : {0}", user.Username);
-        Console.WriteLine("||Age : {0}", user.Age);
-        Console.WriteLine("||Number : {0}", user.Number);
-        Console.WriteLine("||Image : {0}", user.ImageUser);
-        Console.WriteLine("||Email : {0}", user.Email);
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"||Username : {user.Username}");
+        Console.WriteLine($"||Age : {user.Age}");
+        Console.WriteLine($"||Number : {user.Number}");
+        Console.WriteLine($"||Image : {user.ImageUser}");
+        Console.WriteLine($"||Email : {user.Email}");
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||==============Profile Pet===============||");
         if (user.Pets.Count > 0)
         {
             foreach (Pet pet in user.Pets)
             {
-                Console.WriteLine("||Name : {0}", pet.Name);
-                Console.WriteLine("||Age : {0}", pet.Age);
-                Console.WriteLine("||Specie : {0} {1}", pet.Specie, pet.Breed);
-                Console.WriteLine("||Sex : {0}", pet.Sex);
-                Console.WriteLine("||Status : {0}", pet.Status);
-                Console.WriteLine("||Image: {0}", pet.ImagePet);
-                Console.WriteLine("||Trait : {0}", pet.Trait);
-                Console.WriteLine("||Medical History : {0}", pet.MHistory);
-                Console.WriteLine("||Description : {0}", pet.Description);
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine($"||Name : {pet.Name}");
+                Console.WriteLine($"||Age : {pet.Age}");
+                Console.WriteLine($"||Specie : {pet.Specie} {pet.Breed}");
+                Console.WriteLine($"||Sex : {pet.Sex}");
+                Console.WriteLine($"||Status : {pet.Status}");
+                Console.WriteLine($"||Image: {pet.ImagePet}");
+                Console.WriteLine($"||Trait : {pet.Trait}");
+                Console.WriteLine($"||Medical History : {pet.MHistory}");
+                Console.WriteLine($"||Description : {pet.Description}");
                 Console.WriteLine("||----------------------------------------||");
             }
         }
         else
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("||---------------None!!-------------------||");
         }
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||========================================||");
     }
 
@@ -79,17 +84,20 @@ class Program
             if (key.Key != ConsoleKey.Enter)
             {
                 input += key.KeyChar;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("*");
             }
         } while (key.Key != ConsoleKey.Enter);
 
-        Console.WriteLine();
+        Console.WriteLine("");
         return input;
     }
 
     public static User SignIn(int idUser)
     {
+        Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine("||================Sign In=================||");
+        Console.ForegroundColor = ConsoleColor.White;
         Console.Write("||Username : ");
         string usernameSignIn = Console.ReadLine();
         Console.Write("||Password : ");
@@ -108,11 +116,15 @@ class Program
 
     public static User LogIn(List<User> users)
     {
+        Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine("||=================Log In=================||");
+        Console.ForegroundColor = ConsoleColor.White;
         Console.Write("||Username : ");
         string usernameLogIn = Console.ReadLine();
+        Console.ForegroundColor = ConsoleColor.White;
         Console.Write("||Password : ");
         string passwordLogIn = HiddenPassword();
+        Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine("||========================================||");
         User userLoginComplete = null;
         foreach (User user in users)
@@ -130,84 +142,21 @@ class Program
 
         if (userLoginComplete != null)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("||=============Log In Complete============||");
         }
         else
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("||=============Worng Password=============||");
         }
 
         return userLoginComplete;
     }
 
-    public static void SearchUI(List<User> users, List<Pet> pets)
-    {
-        Console.WriteLine("||=================Search=================||");
-        Console.WriteLine("||-[Esc to Exit]--------------------------||");
-        Console.Write("||Keyword : ");
-        string keyword = Console.ReadLine();
-        Console.WriteLine("||----------------------------------------||");
-        bool check = true;
-        foreach (User user in users)
-        {
-            User Find = Search(keyword, user);
-            if (Find != null)
-            {
-                while (true)
-                {
-                    Profile(Find);
-                    check = false;
-                    break;
-                }
-            }
-        }
-
-        foreach (Pet pet in pets)
-        {
-            int idUser = Search(keyword, pet);
-            if (idUser >= 0)
-            {
-                while (true)
-                {
-                    Profile(users[idUser - 1]);
-                    check = false;
-                    break;
-                }
-            }
-
-        }
-        if (Search(keyword, users[users.Count - 1]) == null && check)
-        {
-            Console.WriteLine("||Not Found!!");
-            check = false;
-        }
-        if (Search(keyword, users[users.Count - 1]) == null && check)
-        {
-            Console.WriteLine("||Not Found!!");
-        }
-        Console.WriteLine("||===============End of Search============||");
-    }
-
-    public static User Search(string keyword, User user)
-    {
-        if (user.Username.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
-        {
-            return user;
-        }
-        return null;
-    }
-
-    public static int Search(string keyword, Pet pet)
-    {
-        if (pet.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 || pet.Specie.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 || pet.Breed.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
-        {
-            return pet.UserId;
-        }
-        return -1;
-    }
-
     public static void SearchUI2(List<User> users, List<Pet> pets, User currentUser, List<Group> groups)
     {
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||=================Search=================||");
         Console.WriteLine("||-[Esc to Exit]--------------------------||");
         Console.Write("||Keyword : ");
@@ -237,6 +186,7 @@ class Program
             if (Option.Count > 0)
             {
                 Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("||=================Search=================||");
                 for (int i = 0; i < Option.Count; i++)
                 {
@@ -245,6 +195,7 @@ class Program
                         Console.BackgroundColor = ConsoleColor.Gray;
                         Console.ForegroundColor = ConsoleColor.Black;
                     }
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write("||");
                     Console.WriteLine(Option[i]);
 
@@ -253,6 +204,7 @@ class Program
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("||Not found!!");
             }
 
@@ -278,7 +230,9 @@ class Program
         {
             if (user.Username.Contains(Option[selectedIndex]))
             {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Profile(user);
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
                 Console.WriteLine("||-[C to Chat]----------------------------||");
                 do
                 {
@@ -310,7 +264,9 @@ class Program
 
     public static Pet AddPetUI(int idPet, int idUser)
     {
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("|=================Add Pet================||");
+        Console.ForegroundColor = ConsoleColor.White;
         Console.Write("||Name : ");
         string name = Console.ReadLine();
         Console.Write("||Age : ");
@@ -331,12 +287,14 @@ class Program
         string mHistory = Console.ReadLine();
         Console.Write("||Description : ");
         string description = Console.ReadLine();
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("||=============Add Pet Complete===========||");
         return new Pet(idPet, idUser, name, age, specie, breed, imagePet, sex, status, mHistory, trait, description);
     }
 
     public static void FeedHeadlineText()
     {
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||==================Feed==================||");
         Console.WriteLine("||-[Press + to add Post]------------------||");
         Console.WriteLine("||========================================||");
@@ -388,6 +346,7 @@ class Program
         }
         if (checkPost)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("||None Post!!");
         }
     }
@@ -433,6 +392,7 @@ class Program
 
     public static void PostUI(Post post, User user)
     {
+        Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine($"||Topic : {post.Topic}");
         Console.WriteLine($"||Content : {post.Content}");
         Console.WriteLine($"||Post by {user.Username}");
@@ -445,6 +405,7 @@ class Program
     public static void AddPost(User currentUser)
     {
         Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("||==================Post==================||");
         Console.Write("||Topic : ");
         string topic = Console.ReadLine();
@@ -456,6 +417,7 @@ class Program
 
     public static void MatchUI(List<Pet> pets_User, List<Pet> pets, List<User> users)
     {
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||=================Match==================||");
         Console.WriteLine("||-[Esc to Exit]--------------------------||");
         Console.WriteLine("||----------------------------------------||");
@@ -472,6 +434,7 @@ class Program
             if (pet_name.Count > 0)
             {
                 Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("||=================Your Pet===============||");
                 for (int i = 0; i < pet_name.Count; i++)
                 {
@@ -480,6 +443,7 @@ class Program
                         Console.BackgroundColor = ConsoleColor.Gray;
                         Console.ForegroundColor = ConsoleColor.Black;
                     }
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write("||");
                     Console.WriteLine(pet_name[i]);
 
@@ -488,6 +452,7 @@ class Program
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("||You don't have pet!!");
             }
 
@@ -506,6 +471,7 @@ class Program
         if (pet_name.Count > 0)
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("||=================Match==================||");
             Console.WriteLine("||-[Esc to Exit]--------------------------||");
             Console.WriteLine("||----------------------------------------||");
@@ -524,6 +490,7 @@ class Program
                 if (selectPetSystem.Count > 0)
                 {
                     Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("||=============Compatible Pets============||");
                     Console.WriteLine("||-[Esc to Exit]--------------------------||");
                     for (int i = 0; i < selectPetSystem.Count; i++)
@@ -533,6 +500,7 @@ class Program
                             Console.BackgroundColor = ConsoleColor.Gray;
                             Console.ForegroundColor = ConsoleColor.Black;
                         }
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.Write("||");
                         Console.WriteLine(selectPetSystem[i].Name);
 
@@ -541,6 +509,7 @@ class Program
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("||Don't match your pet!!");
                 }
 
@@ -578,17 +547,20 @@ class Program
         do
         {
             key = Console.ReadKey();
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.Write("||Message : ");
             string text = Console.ReadLine();
             Console.WriteLine($"||{currentUser.Username} : {text}");
         } while (key.Key != ConsoleKey.Escape);
         Console.Clear();
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
         Profile(user);
     }
 
     public static void GroupUI(User currentUser, List<Group> groups)
     {
         Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||=================Group==================||");
         Console.WriteLine("||-[Esc to Exit]--------------------------||");
         List<string> nameGroup = new List<string>();
@@ -603,6 +575,7 @@ class Program
             if (nameGroup.Count > 0)
             {
                 Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("||==============Choose Group==============||");
                 for (int i = 0; i < nameGroup.Count; i++)
                 {
@@ -611,6 +584,7 @@ class Program
                         Console.BackgroundColor = ConsoleColor.Gray;
                         Console.ForegroundColor = ConsoleColor.Black;
                     }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.Write("||");
                     Console.WriteLine(nameGroup[i]);
 
@@ -619,6 +593,7 @@ class Program
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("||None group!!");
             }
             key = Console.ReadKey();
@@ -653,23 +628,29 @@ class Program
     public static Group CreateGroup(User currentUser)
     {
         Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||==============Create Group=============||");
+        Console.ForegroundColor = ConsoleColor.White;
         Console.Write("||Group Name : ");
         string groupName = Console.ReadLine();
         Group newGroup = new Group(groupName, currentUser);
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||=======================================||");
         return newGroup;
     }
 
     public static void GroupMember(Group group)
     {
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||=================Group=================||");
+        Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine($"||Group Name : {group.GroupName}");
         Console.WriteLine("||Member : ");
         foreach (User groupMember in group.member)
         {
             Console.WriteLine($"||{groupMember.Username}");
         }
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("||-[Press J to Join Group]---------------||");
     }
 
@@ -687,10 +668,10 @@ class Program
             {
                 if (i == selectedIndex)
                 {
-                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.BackgroundColor = ConsoleColor.Blue;
                     Console.ForegroundColor = ConsoleColor.Black;
                 }
-
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
                 Console.Write("||");
                 Console.WriteLine(options[i]);
 
@@ -743,7 +724,7 @@ class Program
                     Console.BackgroundColor = ConsoleColor.Gray;
                     Console.ForegroundColor = ConsoleColor.Black;
                 }
-
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
                 Console.Write("||");
                 Console.WriteLine(options[i]);
 
@@ -836,6 +817,8 @@ class Program
             case "Profile":
                 Console.Clear();
                 Profile(currentUser);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("||-[Press + to Add Pet]------------------||");
                 do
                 {
                     key = Console.ReadKey();
